@@ -3,7 +3,7 @@
 #include <sdkhooks>
 #include <tf2_stocks>
 
-#define VERSION 		"1.1.2"
+#define VERSION 		"1.1.3"
 
 
 new Handle:g_hCvarSniperRestricted = INVALID_HANDLE;
@@ -114,7 +114,7 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 
 		new bool:bIsBodyshot = false;
 		if(g_bCanUseCustomDamageBits) {
-			if(damagecustom != TF_CUSTOM_HEADSHOT && damagecustom != TF_CUSTOM_HEADSHOT_DECAPITATION)) {
+			if(damagecustom != TF_CUSTOM_HEADSHOT && damagecustom != TF_CUSTOM_HEADSHOT_DECAPITATION) {
 				bIsBodyshot = true;
 			}
 		} else {
