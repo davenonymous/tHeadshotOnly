@@ -13,6 +13,8 @@ new Handle:g_hCvarAmbassadorRestricted = INVALID_HANDLE;
 new Handle:g_hCvarSidneyRestricted = INVALID_HANDLE;
 new Handle:g_hCvarMachinaRestricted = INVALID_HANDLE;
 new Handle:g_hCvarNoScopeRestricted = INVALID_HANDLE;
+new Handle:g_hCvarHeatMakerRestricted = INVALID_HANDLE;
+
 
 new Handle:g_hCvarShowMissedParticle = INVALID_HANDLE;
 
@@ -23,6 +25,7 @@ new Float:g_fAmbassadorModifer;
 new Float:g_fSidneyModifer;
 new Float:g_fMachinaModifer;
 new Float:g_fNoScopeModifer;
+new Float:g_fHeatMakerModifier;
 
 new bool:g_bShowMissedParticle;
 
@@ -45,6 +48,7 @@ public OnPluginStart() {
 	g_hCvarSidneyRestricted = CreateConVar("sm_theadshotonly_sidney", "1.0", "Modifier for body-shot damage dealt by the Sidney Sleeper", FCVAR_PLUGIN, true, 0.0);
 	g_hCvarMachinaRestricted = CreateConVar("sm_theadshotonly_machina", "0.0", "Modifier for body-shot damage dealt by the Machina", FCVAR_PLUGIN, true, 0.0);
 	g_hCvarAmbassadorRestricted = CreateConVar("sm_theadshotonly_ambassador", "1.0", "Modifier for body-shot damage dealt by the Ambassador", FCVAR_PLUGIN, true, 0.0);
+	g_hCvarHeatMakerRestricted = CreateConVar("sm_theadshotonly_heatmaker", "0.0", "Modifier for body-shot damage dealt by the HeatMaker", FCVAR_PLUGIN, true, 0.0);
 
 	g_hCvarNoScopeRestricted = CreateConVar("sm_theadshotonly_noscope", "1.0", "Modifier for body-shot damage dealt when not zoomed in with SR or BB", FCVAR_PLUGIN, true, 0.0);
 
@@ -58,6 +62,7 @@ public OnPluginStart() {
 	HookConVarChange(g_hCvarMachinaRestricted, Cvar_Changed);
 	HookConVarChange(g_hCvarShowMissedParticle, Cvar_Changed);
 	HookConVarChange(g_hCvarNoScopeRestricted, Cvar_Changed);
+	HookConVarChange(g_hCvarHeatMakerRestricted, Cvar_Changed);
 
 	AutoExecConfig(true, "plugin.tHeadshotOnly");
 
@@ -83,6 +88,7 @@ public OnConfigsExecuted() {
 	g_fSidneyModifer = GetConVarFloat(g_hCvarSidneyRestricted);
 	g_fMachinaModifer = GetConVarFloat(g_hCvarMachinaRestricted);
 	g_fNoScopeModifer = GetConVarFloat(g_hCvarNoScopeRestricted);
+	g_fHeatMakerModifier = GetConVarFloat(g_hCvarHeatMakerRestricted);
 
 
 	g_bShowMissedParticle = GetConVarBool(g_hCvarShowMissedParticle);
@@ -108,7 +114,7 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 
 		new bool:bIsBodyshot = false;
 		if(g_bCanUseCustomDamageBits) {
-			if(!(damagecustom == TF_CUSTOM_HEADSHOT)) {
+			if(damagecustom != TF_CUSTOM_HEADSHOT && damagecustom != TF_CUSTOM_HEADSHOT_DECAPITATION)) {
 				bIsBodyshot = true;
 			}
 		} else {
@@ -121,7 +127,7 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 
 		if(bIsBodyshot) {
 			new iWeaponId = TF2_GetCurrentWeapon(attacker);
-			if((iWeaponId == 14 || iWeaponId == 201 || iWeaponId == 664) && g_fSniperModifer != 1.0) {
+			if((iWeaponId == 14 || iWeaponId == 201 || iWeaponId == 664 || iWeaponId == 851) && g_fSniperModifer != 1.0) {
 				if(bZoomed) {
 					damage *= g_fSniperModifer;
 
@@ -173,6 +179,12 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 				damage *= g_fMachinaModifer;
 
 				if(g_fMachinaModifer == 0.0)
+					bNeedMissedParticle = true;
+			}
+			else if(iWeaponId == 752 && g_fHeatMakerModifier != 1.0) {
+				damage *= g_fHeatMakerModifier;
+
+				if(g_fHeatMakerModifier == 0.0)
 					bNeedMissedParticle = true;
 			}
 
