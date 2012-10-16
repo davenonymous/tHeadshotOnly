@@ -102,6 +102,14 @@ public OnClientPutInServer(client) {
     SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
+stock bool:IsDefaultRifle(iWeaponId) {
+	return (
+			iWeaponId == 14  || iWeaponId == 201 || iWeaponId == 664 || iWeaponId == 851 ||
+			iWeaponId == 792 || iWeaponId == 801 || iWeaponId == 881 || iWeaponId == 890 ||
+			iWeaponId == 899 || iWeaponId == 908
+	);
+}
+
 public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damagetype, &weapon, Float:damageForce[3], Float:damagePosition[3], damagecustom) {
 	if(attacker > 0 && attacker <= MaxClients) {
 		decl String:sWeapon[32]; decl String:sInflictor[32];
@@ -127,7 +135,7 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 
 		if(bIsBodyshot) {
 			new iWeaponId = TF2_GetCurrentWeapon(attacker);
-			if((iWeaponId == 14 || iWeaponId == 201 || iWeaponId == 664 || iWeaponId == 851) && g_fSniperModifer != 1.0) {
+			if(IsDefaultRifle(iWeaponId) && g_fSniperModifer != 1.0) {
 				if(bZoomed) {
 					damage *= g_fSniperModifer;
 
