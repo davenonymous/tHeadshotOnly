@@ -3,7 +3,7 @@
 #include <sdkhooks>
 #include <tf2_stocks>
 
-#define VERSION 		"1.1.3"
+#define VERSION 		"1.1.4"
 
 
 new Handle:g_hCvarSniperRestricted = INVALID_HANDLE;
