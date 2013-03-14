@@ -3,7 +3,7 @@
 #include <sdkhooks>
 #include <tf2_stocks>
 
-#define VERSION 		"1.1.4"
+#define VERSION 		"1.1.5"
 
 
 new Handle:g_hCvarSniperRestricted = INVALID_HANDLE;
@@ -106,7 +106,7 @@ stock bool:IsDefaultRifle(iWeaponId) {
 	return (
 			iWeaponId == 14  || iWeaponId == 201 || iWeaponId == 664 || iWeaponId == 851 ||
 			iWeaponId == 792 || iWeaponId == 801 || iWeaponId == 881 || iWeaponId == 890 ||
-			iWeaponId == 899 || iWeaponId == 908
+			iWeaponId == 899 || iWeaponId == 908 || iWeaponId == 957 || iWeaponId == 966
 	);
 }
 
@@ -165,13 +165,13 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 					}
 				}
 			}
-			else if(iWeaponId == 56 && g_fHuntsmanModifer != 1.0) {
+			else if((iWeaponId == 56 || iWeaponId == 1005) && g_fHuntsmanModifer != 1.0) {
 				damage *= g_fHuntsmanModifer;
 
 				if(g_fHuntsmanModifer == 0.0)
 					bNeedMissedParticle = true;
 			}
-			else if(iWeaponId == 61 && g_fAmbassadorModifer != 1.0) {
+			else if((iWeaponId == 61 || iWeaponId == 1006) && g_fAmbassadorModifer != 1.0) {
 				damage *= g_fAmbassadorModifer;
 
 				if(g_fAmbassadorModifer == 0.0)
