@@ -42,7 +42,7 @@ public OnPluginStart() {
 	HookConVarChange(g_hCvarFile, Cvar_Changed);
 
 	// Convars for the no-scope-modifiers
-	g_hCvarNoScopeBody = CreateConVar("sm_theadshotonly_noscope_body", "1.0", "Modifier for body-shot damage dealt when not zoomed in", FCVAR_PLUGIN, true, 0.0);
+	g_hCvarNoScopeBody = CreateConVar("sm_theadshotonly_noscope_body", "0.0", "Modifier for body-shot damage dealt when not zoomed in", FCVAR_PLUGIN, true, 0.0);
 	g_hCvarNoScopeHead = CreateConVar("sm_theadshotonly_noscope_head", "1.0", "Modifier for head-shot damage dealt when not zoomed in", FCVAR_PLUGIN, true, 0.0);
 	HookConVarChange(g_hCvarNoScopeBody, Cvar_Changed);
 	HookConVarChange(g_hCvarNoScopeHead, Cvar_Changed);
