@@ -161,8 +161,6 @@ public LoadConfig() {
 	// First load the current config file
 	new Handle:hKvCfg = CreateKeyValues("tHeadshotOnly");
 	FileToKeyValues(hKvCfg, g_sCfgFile);
-	//KvGotoFirstSubKey(hKvCfg, true);
-	//KvJumpToKey(hKvCfg, "tHeadshotOnly", true);
 
 	// Preload the config with weapons that have no scope as far as we know
 	// to this day 2014-05-29
@@ -224,7 +222,6 @@ public LoadConfig() {
 					new String:sTag[64];
 					KvGetSectionName(g_hItems, sTag, sizeof(sTag));
 
-					//PushArrayStringUnique(IsMainClass(sTag) ? hArrayBlockedWeaponsForMain : hArrayBlockedWeaponsForSupp, sName);
 					if(StrEqual(sTag, "can_headshot")) {
 						bCanHeadshot = true;
 						break;
