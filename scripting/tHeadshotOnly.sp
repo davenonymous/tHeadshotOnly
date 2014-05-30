@@ -3,7 +3,7 @@
 #include <sdkhooks>
 #include <tf2_stocks>
 
-#define VERSION 				"2.0.0"
+#define VERSION 				"2.0.1"
 #define PATH_ITEMS_GAME			"scripts/items/items_game.txt"
 
 new Handle:g_hWeapons;
@@ -18,11 +18,13 @@ new Handle:g_hCvarFile = INVALID_HANDLE;
 new Handle:g_hCvarNoScopeBody = INVALID_HANDLE;
 new Handle:g_hCvarNoScopeHead = INVALID_HANDLE;
 new Handle:g_hCvarShowMissedParticle = INVALID_HANDLE;
+new Handle:g_hCvarEnabled = INVALID_HANDLE;
 
 new String:g_sCfgFile[255];
 new Float:g_fNoScopeModifierBody;
 new Float:g_fNoScopeModifierHead;
 new bool:g_bShowMissedParticle;
+new bool:g_bEnabled;
 
 public Plugin:myinfo =
 {
@@ -36,6 +38,10 @@ public OnPluginStart() {
 	// Declare some cvars
 
 	CreateConVar("sm_theadshotonly_version", VERSION, "[TF2] tHeadshotOnly", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+
+	// Convar to enable/disable the plugin
+	g_hCvarEnabled = CreateConVar("sm_theadshotonly_enable", "1", "Enable/disable this plugin", FCVAR_PLUGIN, true, 0.0, true, 1.0);
+	HookConVarChange(g_hCvarEnabled, Cvar_Changed);
 
 	// Convar to store the config file in
 	g_hCvarFile = CreateConVar("sm_theadshotonly_cfgfile", "tHeadshotOnly.cfg", "File to store configuration in", FCVAR_PLUGIN);
@@ -92,14 +98,16 @@ public Cvar_Changed(Handle:convar, const String:oldValue[], const String:newValu
 		g_fNoScopeModifierHead = GetConVarFloat(g_hCvarNoScopeHead);
 	} else if(convar == g_hCvarNoScopeBody) {
 		g_fNoScopeModifierBody = GetConVarFloat(g_hCvarNoScopeBody);
+	} else if(convar == g_hCvarEnabled) {
+		g_bEnabled = GetConVarBool(g_hCvarEnabled);
 	}
-
 }
 
 public OnConfigsExecuted() {
 	g_fNoScopeModifierBody = GetConVarFloat(g_hCvarNoScopeBody);
 	g_fNoScopeModifierHead = GetConVarFloat(g_hCvarNoScopeHead);
 	g_bShowMissedParticle = GetConVarBool(g_hCvarShowMissedParticle);
+	g_bEnabled = GetConVarBool(g_hCvarEnabled);
 
 	GetConVarString(g_hCvarFile, g_sCfgFile, sizeof(g_sCfgFile));
 	BuildPath(Path_SM, g_sCfgFile, sizeof(g_sCfgFile), "configs/%s", g_sCfgFile);
@@ -408,6 +416,10 @@ public OnClientPutInServer(client) {
 }
 
 public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damagetype, &weapon, Float:damageForce[3], Float:damagePosition[3], damagecustom) {
+	if(!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	if(attacker > 0 && attacker <= MaxClients) {
 		decl String:sWeapon[32]; decl String:sInflictor[32];
 		GetClientWeapon(attacker, sWeapon, sizeof(sWeapon));
